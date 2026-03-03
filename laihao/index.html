@@ -522,21 +522,6 @@
     observer.observe(giftingSection);
   }
 
-  // --- Vertical decoration fade-in ---
-  const verticalDeco = document.querySelector('.vertical-decoration');
-  if (verticalDeco && giftingSection) {
-    const decoObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          verticalDeco.classList.add('is-visible');
-        } else {
-          verticalDeco.classList.remove('is-visible');
-        }
-      });
-    }, { threshold: 0.1 });
-    decoObs.observe(document.querySelector('.process-section'));
-  }
-
   // 標題：剛進入畫面就淡入
   const processTitleBlock = document.querySelector('.process-title-block');
   if (processTitleBlock) {
@@ -552,16 +537,20 @@
     titleObs.observe(processTitleBlock);
   }
 
-  // 步驟：滾到接近中央才翻牌
+  // 步驟：滾到接近中央才翻牌（vertical-decoration 同步淡入）
   const processContainer = document.querySelector('.process-container');
+  const verticalDeco = document.querySelector('.vertical-decoration');
   if (processContainer) {
     const stepObs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.closest('.process-section').classList.add('is-visible');
+          if (verticalDeco) verticalDeco.classList.add('is-visible');
+        } else {
+          if (verticalDeco) verticalDeco.classList.remove('is-visible');
         }
       });
-    }, { threshold: 0.1, rootMargin: '-10% 0px -35% 0px' });
+    }, { threshold: 0.1, rootMargin: '-35% 0px -10% 0px' });
     stepObs.observe(processContainer);
   }
 
