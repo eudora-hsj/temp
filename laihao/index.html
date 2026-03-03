@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>來好風格首圖 Demo</title>
+  <!-- Google Fonts Import -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@800&family=Outfit:wght@400&display=swap" rel="stylesheet">
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <style>
+	  * {
+		  margin: 0;
+		  padding: 0;
+		  box-sizing: border-box;
+	  }
+	  
+	  body {
+		  overflow-x: hidden;
+	  }
+	  
+	  .banner-wrapper {
+		  position: relative;
+		  width: 100vw;
+		  height: 481px;
+		  background-color: #FFF;
+		  overflow: hidden;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  cursor: pointer;
+	  }
+	  
+	  .bg-photo {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		  width: 100%;
+		  height: 100%;
+		  background-image: url('img/1512x.webp');
+		  background-size: cover;
+		  background-position: center;
+		  transition: filter 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
+	  }
+	  
+	  .window-grid {
+		  position: absolute;
+		  top: 0;
+		  left: 0;
+		  width: 100%;
+		  height: 100%;
+		  display: flex;
+		  flex-wrap: wrap;
+		  pointer-events: none;
+		  z-index: 1;
+	  }
+
+      .grid-cell {
+          flex: 0 0 160px;
+          height: 160px;
+          opacity: 0;
+          transition: opacity 1.2s ease;
+          background-image: url('img/patten.svg');
+          background-size: 100% 100%;
+      }
+	  
+	  .main-content {
+		  position: relative;
+		  z-index: 2;
+		  text-align: center;
+	  }
+	  
+	  .title-box h1 {
+		  color: #fff;
+		  font-size: 59px;
+		  letter-spacing: 0.8rem;
+		  margin: 0;
+		  /*font-family: "Microsoft JhengHei", sans-serif;*/
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0;
+          width: 100%;
+	  }
+
+      .title-line {
+          display: block;
+          opacity: 0;
+          transition: opacity 1s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+          transition-delay: 0.2s;
+          white-space: nowrap;
+          /*padding: 10px 25px;*/
+          text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .title-line-1 {
+          transform: translateX(-100%);
+          margin-bottom: 0; 
+      }
+      
+      .title-line-2 {
+          transform: translateX(100%);
+      }
+
+	  .banner-wrapper:hover .bg-photo {
+		  filter: blur(3px) brightness(1.1);
+		  transform: scale(1.08);
+	  }
+	  
+      .banner-wrapper:hover .title-line {
+          opacity: 1;
+      }
+
+      .banner-wrapper:hover .title-line-1 {
+          transform: translateX(-50%);
+      }
+      .banner-wrapper:hover .title-line-2 {
+          transform: translateX(50%);
+      }
+
+      /* --- Gifting Section Styles --- */
+      .gifting-section {
+          position: relative;
+          width: 100%;
+          padding: 120px 80px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #fff;
+          overflow: hidden;
+          /*z-index: 2;*/
+      }
+
+      .gifting-section .content-area {
+          text-align: center;
+          max-width: 650px;
+      }
+
+      .gifting-title {
+          /*font-family: 'Abhaya Libre', serif;*/
+          font-style: normal;
+          font-weight: 800;
+          font-size: 2.2rem;
+          text-align: center;
+          letter-spacing: 0.02em;
+          color: #F9C795;
+          margin-bottom: 25px;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 1.8s ease, transform 1.8s ease;
+      }
+
+      .gifting-text {
+          /*font-family: 'Outfit', sans-serif;*/
+          font-style: normal;
+          font-weight: 400;
+          font-size: 15px;
+          line-height: 172%;
+          text-align: center;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+          color: #666;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 1.8s ease 0.6s, transform 1.8s ease 0.6s;
+      }
+
+      .gifting-section.is-visible .gifting-title {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      .gifting-section.is-visible .gifting-text {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      .vertical-decoration {
+          position: absolute;
+          right: 8%;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          opacity: 0;
+          transition: opacity 1.2s ease;
+      }
+
+      .gifting-section.is-visible .vertical-decoration {
+          opacity: 1;
+      }
+
+      .vertical-text {
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          /*font-family: 'Microsoft JhengHei', sans-serif;*/
+          letter-spacing: 0.5em;
+	      color: #F9C795;
+      }
+
+      .deco-icon {
+          width: 20px;
+          height: auto;
+      }
+
+      /* --- Process Section Styles --- */
+      .process-section {
+          position: relative;
+          width: 100%;
+          padding: 180px 5% 180px;
+          text-align: center;
+          overflow: hidden;
+      }
+
+      .wave-background {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+      }
+
+      .wave-background svg {
+          width: 100%;
+          height: 100%;
+          display: block;
+      }
+
+      .process-title-block {
+          margin-bottom: 60px;
+          position: relative;
+          z-index: 2;
+      }
+
+      .process-main-title {
+          font-weight: 400;
+          font-size: 1.6rem;
+          color: #222;
+          margin-bottom: 10px;
+          letter-spacing: 0.15em;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 1.8s ease, transform 1.8s ease;
+      }
+
+      .process-sub-title {
+          font-family: 'Outfit', sans-serif;
+          font-size: 0.85rem;
+          color: #aaa;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 1.8s ease 0.3s, transform 1.8s ease 0.3s;
+      }
+
+      .process-section.title-visible .process-main-title,
+      .process-section.title-visible .process-sub-title {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      .process-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 40px;
+          max-width: 1400px;
+          margin: 0 auto;
+          position: relative;
+          z-index: 2;
+      }
+
+      .process-step {
+          width: 150px;
+          height: 200px;
+          background-image: url('img/circle.svg');
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          background-position: center;
+          
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          
+          opacity: 0;
+          padding: 20px;
+          transition: scale 0.3s ease;
+          cursor: pointer;
+      }
+
+      .process-section.is-visible .process-step:hover {
+          scale: 1.06;
+      }
+
+      @keyframes flipIn {
+          0%   { opacity: 0; transform: perspective(600px) rotateY(-90deg); }
+          60%  { opacity: 0.6; }
+          100% { opacity: 1; transform: perspective(600px) rotateY(0deg); }
+      }
+
+      .process-section.is-visible .process-step {
+          animation: flipIn 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+      .process-section.is-visible .process-step:nth-child(1) { animation-delay: 0s; }
+      .process-section.is-visible .process-step:nth-child(2) { animation-delay: 0.4s; }
+      .process-section.is-visible .process-step:nth-child(3) { animation-delay: 0.8s; }
+      .process-section.is-visible .process-step:nth-child(4) { animation-delay: 1.2s; }
+      .process-section.is-visible .process-step:nth-child(5) { animation-delay: 1.6s; }
+      .process-section.is-visible .process-step:nth-child(6) { animation-delay: 2.0s; }
+
+      .step-content {
+          text-align: center;
+          color: #888;
+      }
+
+      .step-text {
+          font-weight: 400;
+          font-size: 0.9rem;
+          line-height: 1.6;
+          margin-bottom: 18px;
+          letter-spacing: 0.08em;
+          color: #444;
+      }
+
+      .step-num {
+          font-family: 'Outfit', sans-serif;
+          font-weight: 400;
+          font-size: 0.8rem;
+          color: #dbb98e;
+          letter-spacing: 0.15em;
+      }
+
+  </style>
+</head>
+<body>
+
+<div class="banner-wrapper" id="mainBanner">
+  <div class="bg-photo"></div>
+  <div class="window-grid" id="windowGrid"></div>
+  <div class="main-content">
+    <div class="title-box">
+      <h1>
+          <span class="title-line title-line-1">客製</span>
+          <span class="title-line title-line-2">禮盒</span>
+      </h1>
+    </div>
+  </div>
+</div>
+
+<section class="gifting-section">
+    <div class="content-area">
+        <h2 class="gifting-title">企業採購、禮贈品客製</h2>
+        <p class="gifting-text">
+            我們期待能透過各種方式，提供多元且彈性的服務，<br>
+            讓更多人看見台灣美麗的風景及溫暖的人們，感受在地的美好
+        </p>
+    </div>
+    <div class="vertical-decoration">
+        <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+      <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+        <span class="vertical-text">客製禮盒</span>
+      <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+    </div>
+</section>
+
+<!-- Process Section with Wave Background -->
+<section class="process-section">
+    <!-- 波浪背景 SVG（參考 index2.html 做法：整個 section 用一個 SVG 撐滿） -->
+    <div class="wave-background">
+        <svg viewBox="0 0 1440 800" preserveAspectRatio="none">
+            <path id="wave-bg" fill="#f4eee4"
+                  d="M0,80 C360,180 450,0 720,80 C990,160 1080,0 1440,80 V720 C1080,620 990,800 720,720 C450,620 360,800 0,720 Z" />
+        </svg>
+    </div>
+
+    <div class="process-title-block">
+        <h2 class="process-main-title">服務流程</h2>
+        <p class="process-sub-title">SERVICE PROCESS</p>
+    </div>
+
+    <div class="process-container">
+        <!-- Item 1 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">需求提供<br>細節討論</div>
+                <div class="step-num">01</div>
+            </div>
+        </div>
+        <!-- Item 2 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">確認內容<br>提供報價</div>
+                <div class="step-num">02</div>
+            </div>
+        </div>
+        <!-- Item 3 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">簽訂合約</div>
+                <div class="step-num">03</div>
+            </div>
+        </div>
+        <!-- Item 4 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">校稿<br>打樣製作</div>
+                <div class="step-num">04</div>
+            </div>
+        </div>
+        <!-- Item 5 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">完成收貨</div>
+                <div class="step-num">05</div>
+            </div>
+        </div>
+        <!-- Item 6 -->
+        <div class="process-step">
+            <div class="step-content">
+                <div class="step-text">售後服務</div>
+                <div class="step-num">06</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 第四區塊（空白，拉長頁面） -->
+<section style="height: 60vh;"></section>
+
+<script>
+  // ... existing script ...
+  const banner = document.getElementById('mainBanner');
+  const gridContainer = document.getElementById('windowGrid');
+  const cellSize = 160;
+  let cells = [];
+
+  function createGrid() {
+    gridContainer.innerHTML = '';
+    cells = [];
+    const containerWidth = gridContainer.offsetWidth;
+    const containerHeight = gridContainer.offsetHeight;
+    if (containerWidth === 0 || containerHeight === 0) {
+        requestAnimationFrame(createGrid);
+        return;
+    }
+    const cols = Math.ceil(containerWidth / cellSize);
+    const rows = Math.ceil(containerHeight / cellSize);
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < cols * rows; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('grid-cell');
+      fragment.appendChild(cell);
+      cells.push(cell);
+    }
+    gridContainer.appendChild(fragment);
+  }
+
+  function animateGrid(fadeIn) {
+    const maxDelay = 1500;
+    cells.forEach(cell => {
+      const delay = Math.random() * maxDelay;
+      cell.style.transitionDelay = `${delay}ms`;
+      cell.style.opacity = fadeIn ? '0.6' : '0';
+    });
+  }
+
+  banner.addEventListener('mouseenter', () => animateGrid(true));
+  banner.addEventListener('mouseleave', () => animateGrid(false));
+  banner.addEventListener('click', () => {
+    console.log('Banner clicked - 準備跳轉至客製頁面');
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+      createGrid();
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(createGrid, 100);
+      });
+  });
+
+  // --- Intersection Observer for fade-in effect ---
+  const giftingSection = document.querySelector('.gifting-section');
+  if (giftingSection) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        } else {
+          entry.target.classList.remove('is-visible');
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(giftingSection);
+  }
+
+
+  // 標題：剛進入畫面就淡入
+  const processTitleBlock = document.querySelector('.process-title-block');
+  if (processTitleBlock) {
+    const titleObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.closest('.process-section').classList.add('title-visible');
+        } else {
+          entry.target.closest('.process-section').classList.remove('title-visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    titleObs.observe(processTitleBlock);
+  }
+
+  // 步驟：滾到接近中央才翻牌
+  const processContainer = document.querySelector('.process-container');
+  if (processContainer) {
+    const stepObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.closest('.process-section').classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '-35% 0px -35% 0px' });
+    stepObs.observe(processContainer);
+  }
+
+  // --- GSAP Wave Animation ---
+  gsap.to("#wave-bg", {
+      attr: { d: "M0,100 C300,160 500,20 720,100 C940,180 1100,20 1440,100 V700 C1100,620 940,780 720,700 C500,620 300,780 0,700 Z" },
+      duration: 4,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut"
+  });
+</script>
+</body>
+</html>
