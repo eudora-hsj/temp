@@ -122,7 +122,7 @@
       .gifting-section {
           position: relative;
           width: 100%;
-          padding: 120px 80px;
+          padding: 4px 80px 110px 80px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -175,11 +175,17 @@
           transform: translateY(0);
       }
 
+      .sticky-scope {
+          position: relative;
+      }
+
       .vertical-decoration {
-          position: absolute;
-          right: 8%;
-          top: 50%;
+          position: sticky;
+          top: 50vh;
           transform: translateY(-50%);
+          float: right;
+          margin-right: 5%;
+          z-index: 10;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -188,7 +194,7 @@
           transition: opacity 1.2s ease;
       }
 
-      .gifting-section.is-visible .vertical-decoration {
+      .vertical-decoration.is-visible {
           opacity: 1;
       }
 
@@ -350,6 +356,15 @@
   </div>
 </div>
 
+<div class="sticky-scope">
+
+<div class="vertical-decoration">
+    <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+    <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+    <span class="vertical-text">客製禮盒</span>
+    <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
+</div>
+
 <section class="gifting-section">
     <div class="content-area">
         <h2 class="gifting-title">企業採購、禮贈品客製</h2>
@@ -357,12 +372,6 @@
             我們期待能透過各種方式，提供多元且彈性的服務，<br>
             讓更多人看見台灣美麗的風景及溫暖的人們，感受在地的美好
         </p>
-    </div>
-    <div class="vertical-decoration">
-        <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
-      <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
-        <span class="vertical-text">客製禮盒</span>
-      <img src="img/fl.svg" alt="decoration icon" class="deco-icon">
     </div>
 </section>
 
@@ -429,6 +438,8 @@
 
 <!-- 第四區塊（空白，拉長頁面） -->
 <section style="height: 60vh;"></section>
+
+</div><!-- /.sticky-scope -->
 
 <script>
   // ... existing script ...
@@ -511,6 +522,20 @@
     observer.observe(giftingSection);
   }
 
+  // --- Vertical decoration fade-in ---
+  const verticalDeco = document.querySelector('.vertical-decoration');
+  if (verticalDeco && giftingSection) {
+    const decoObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          verticalDeco.classList.add('is-visible');
+        } else {
+          verticalDeco.classList.remove('is-visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    decoObs.observe(document.querySelector('.process-section'));
+  }
 
   // 標題：剛進入畫面就淡入
   const processTitleBlock = document.querySelector('.process-title-block');
