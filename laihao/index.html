@@ -48,10 +48,6 @@
 	  
 	  .window-grid {
 		  position: absolute;
-		  top: 0;
-		  left: 0;
-		  width: 100%;
-		  height: 100%;
 		  display: flex;
 		  flex-wrap: wrap;
 		  pointer-events: none;
@@ -60,9 +56,10 @@
 
       .grid-cell {
           flex: 0 0 160px;
+          width: 160px;
           height: 160px;
           opacity: 0;
-          transition: opacity 1.2s ease;
+          transition: opacity 0.5s ease;
           background-image: url('img/patten.svg');
           background-size: 100% 100%;
       }
@@ -440,29 +437,43 @@
   const cellSize = 160;
   let cells = [];
 
+  let gridCols = 0, gridRows = 0;
+
   function createGrid() {
     gridContainer.innerHTML = '';
     cells = [];
-    const containerWidth = gridContainer.offsetWidth;
-    const containerHeight = gridContainer.offsetHeight;
-    if (containerWidth === 0 || containerHeight === 0) {
+    const wrapperWidth = banner.offsetWidth;
+    const wrapperHeight = banner.offsetHeight;
+    if (wrapperWidth === 0 || wrapperHeight === 0) {
         requestAnimationFrame(createGrid);
         return;
     }
-    const cols = Math.ceil(containerWidth / cellSize);
-    const rows = Math.ceil(containerHeight / cellSize);
+    // 多算一排一列，確保超出填滿，overflow hidden 會裁切
+    gridCols = Math.ceil(wrapperWidth / cellSize) + 1;
+    gridRows = Math.ceil(wrapperHeight / cellSize) + 1;
+    const gridW = gridCols * cellSize;
+    const gridH = gridRows * cellSize;
+    // 置中：讓超出的部分左右/上下平均分配
+    gridContainer.style.width = gridW + 'px';
+    gridContainer.style.height = gridH + 'px';
+    gridContainer.style.left = ((wrapperWidth - gridW) / 2) + 'px';
+    gridContainer.style.top = ((wrapperHeight - gridH) / 2) + 'px';
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < cols * rows; i++) {
-      const cell = document.createElement('div');
-      cell.classList.add('grid-cell');
-      fragment.appendChild(cell);
-      cells.push(cell);
+    for (let r = 0; r < gridRows; r++) {
+      for (let c = 0; c < gridCols; c++) {
+        const cell = document.createElement('div');
+        cell.classList.add('grid-cell');
+        cell._row = r;
+        cell._col = c;
+        fragment.appendChild(cell);
+        cells.push(cell);
+      }
     }
     gridContainer.appendChild(fragment);
   }
 
   function animateGrid(fadeIn) {
-    const maxDelay = 1500;
+    const maxDelay = 500;
     cells.forEach(cell => {
       const delay = Math.random() * maxDelay;
       cell.style.transitionDelay = `${delay}ms`;
