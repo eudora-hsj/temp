@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>今日能量 — 心靈抽卡</title>
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iI2ZhZjZmMSIvPjxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YTk2ZSIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PGxpbmUgeDE9IjE2IiB5MT0iNSIgeDI9IjE2IiB5Mj0iMjciLz48bGluZSB4MT0iNSIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNiIvPjxsaW5lIHgxPSI4LjUiIHkxPSI4LjUiIHgyPSIyMy41IiB5Mj0iMjMuNSIvPjxsaW5lIHgxPSIyMy41IiB5MT0iOC41IiB4Mj0iOC41IiB5Mj0iMjMuNSIvPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjMuNSIgZmlsbD0iI2M5YTk2ZSIgb3BhY2l0eT0iLjM1Ii8+PC9nPjwvc3ZnPg==" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
@@ -30,26 +31,16 @@ body{
   background:var(--cream);
   color:var(--text);
   overflow-x:hidden;
+  -webkit-user-select:none;user-select:none;
 }
 @media(hover:hover){
-  *,*::before,*::after{cursor:none !important}
+  :root,html,body,*,*::before,*::after{
+    cursor:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNjOWE5NmUiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxsaW5lIHgxPSIxNCIgeTE9IjQiIHgyPSIxNCIgeTI9IjI0Ii8+PGxpbmUgeDE9IjQiIHkxPSIxNCIgeDI9IjI0IiB5Mj0iMTQiLz48bGluZSB4MT0iNy41IiB5MT0iNy41IiB4Mj0iMjAuNSIgeTI9IjIwLjUiLz48bGluZSB4MT0iMjAuNSIgeTE9IjcuNSIgeDI9IjcuNSIgeTI9IjIwLjUiLz48Y2lyY2xlIGN4PSIxNCIgY3k9IjE0IiByPSIzIiBmaWxsPSIjYzlhOTZlIiBvcGFjaXR5PSIuMzUiLz48L2c+PC9zdmc+") 14 14, crosshair !important;
+  }
+  a,button,[role="button"],input,select,textarea,label{
+    cursor:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDI4IDI4Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNjOWE5NmUiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxsaW5lIHgxPSIxNCIgeTE9IjQiIHgyPSIxNCIgeTI9IjI0Ii8+PGxpbmUgeDE9IjQiIHkxPSIxNCIgeDI9IjI0IiB5Mj0iMTQiLz48bGluZSB4MT0iNy41IiB5MT0iNy41IiB4Mj0iMjAuNSIgeTI9IjIwLjUiLz48bGluZSB4MT0iMjAuNSIgeTE9IjcuNSIgeDI9IjcuNSIgeTI9IjIwLjUiLz48Y2lyY2xlIGN4PSIxNCIgY3k9IjE0IiByPSIzIiBmaWxsPSIjYzlhOTZlIiBvcGFjaXR5PSIuMzUiLz48L2c+PC9zdmc+") 14 14, crosshair !important;
+  }
 }
-
-.custom-cursor{
-  position:fixed;z-index:9999;
-  width:28px;height:28px;
-  margin-left:-14px;margin-top:-14px;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .2s ease;
-  display:none;
-}
-@media(hover:hover){
-  .custom-cursor{display:block}
-}
-.custom-cursor.visible{opacity:1}
-
-.spread{-webkit-user-select:none;user-select:none}
 
 /* ── 背景 (fixed) ── */
 .bg{
@@ -312,15 +303,6 @@ body.scroll-locked{overflow:hidden}
 </head>
 <body>
 
-<svg class="custom-cursor" id="customCursor" width="28" height="28" viewBox="0 0 28 28">
-  <g fill="none" stroke="#c9a96e" stroke-width="1.2" stroke-linecap="round">
-    <line x1="14" y1="4" x2="14" y2="24"/>
-    <line x1="4" y1="14" x2="24" y2="14"/>
-    <line x1="7.5" y1="7.5" x2="20.5" y2="20.5"/>
-    <line x1="20.5" y1="7.5" x2="7.5" y2="20.5"/>
-    <circle cx="14" cy="14" r="3" fill="#c9a96e" opacity=".35"/>
-  </g>
-</svg>
 
 <div class="bg"></div>
 <div class="glow glow--1"></div>
@@ -544,31 +526,31 @@ gsap.to('.glow--3', { x:10, y:-10, duration:5, ease:'sine.inOut', yoyo:true, rep
    ══════════════════════════════════════ */
 gsap.fromTo('.hero__date',
   { y: 0, opacity: 1 },
-  { y: -25, opacity: 0, ease: 'none',
+  { y: -25, opacity: 0, ease: 'none', immediateRender: false,
     scrollTrigger: { trigger: '#hero', start: '60% center', end: 'bottom top', scrub: 1 }
   }
 );
 gsap.fromTo('.hero__title',
   { y: 0, opacity: 1 },
-  { y: -60, opacity: 0, ease: 'none',
+  { y: -60, opacity: 0, ease: 'none', immediateRender: false,
     scrollTrigger: { trigger: '#hero', start: 'center center', end: 'bottom top', scrub: 1 }
   }
 );
 gsap.fromTo('.hero__sub',
   { y: 0, opacity: 1 },
-  { y: -30, opacity: 0, ease: 'none',
+  { y: -30, opacity: 0, ease: 'none', immediateRender: false,
     scrollTrigger: { trigger: '#hero', start: '60% center', end: 'bottom top', scrub: 1 }
   }
 );
 gsap.fromTo('.hero__eyebrow',
   { y: 0, opacity: 1 },
-  { y: -80, opacity: 0, ease: 'none',
+  { y: -80, opacity: 0, ease: 'none', immediateRender: false,
     scrollTrigger: { trigger: '#hero', start: '40% center', end: 'bottom top', scrub: 1 }
   }
 );
 gsap.fromTo('#scrollHint',
   { opacity: 1 },
-  { opacity: 0, ease: 'none',
+  { opacity: 0, ease: 'none', immediateRender: false,
     scrollTrigger: { trigger: '#hero', start: '20% top', end: '40% top', scrub: 1 }
   }
 );
@@ -619,8 +601,8 @@ gsap.fromTo('.card-section__title',
     opacity: 1, y: 0, ease: 'none',
     scrollTrigger: {
       trigger: '#cardSection',
-      start: 'top 80%',
-      end: 'top 50%',
+      start: 'top 95%',
+      end: 'top 20%',
       scrub: 1,
     }
   }
@@ -630,7 +612,8 @@ gsap.fromTo('.card-section__title',
 let hasDealt = false;
 ScrollTrigger.create({
   trigger: '#cardSection',
-  start: 'top 95%',
+  start: 'top 50%',
+  end: 'bottom',
   onEnter: () => {
     if (!hasDealt) { dealCards(); hasDealt = true; }
   },
@@ -779,18 +762,24 @@ function dealCards() {
     },
   });
 
-  // 聚集完成後啟動呼吸浮動
+  // 聚集完成後啟動呼吸浮動（四方向一致）
   if (breathTrigger) breathTrigger.kill();
+  const startBreath = () => {
+    gsap.killTweensOf(spread);
+    gsap.to(spread, { y: -6, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+  };
+  const stopBreath = () => {
+    gsap.killTweensOf(spread);
+    gsap.set(spread, { y: 0 });
+  };
   breathTrigger = ScrollTrigger.create({
     trigger: '#cardSection',
     start: 'top 20%',
-    onEnter: () => {
-      gsap.to(spread, { y: -6, duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-    },
-    onLeaveBack: () => {
-      gsap.killTweensOf(spread);
-      gsap.set(spread, { y: 0 });
-    }
+    end: 'bottom bottom',
+    onEnter: startBreath,
+    onEnterBack: startBreath,
+    onLeave: stopBreath,
+    onLeaveBack: stopBreath,
   });
 }
 
@@ -959,20 +948,15 @@ function resizeCanvas() {
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
-// 追蹤最後一次 mousemove 的 pageX/pageY，捲動時換算回 clientY
+// 追蹤滑鼠位置（仙女棒粒子用）
 let lastPageX = -999, lastPageY = -999;
-const cursorEl = document.getElementById('customCursor');
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX; mouseY = e.clientY;
   lastPageX = e.pageX; lastPageY = e.pageY;
-  cursorEl.style.left = e.clientX + 'px';
-  cursorEl.style.top = e.clientY + 'px';
-  if (!cursorEl.classList.contains('visible')) cursorEl.classList.add('visible');
 });
 document.addEventListener('mouseleave', () => {
   mouseX = -999; mouseY = -999; lastPageX = -999;
-  cursorEl.classList.remove('visible');
 });
 // 捲動時根據 page 座標重算 client 座標，保持仙女棒跟隨游標
 window.addEventListener('scroll', () => {
@@ -1275,7 +1259,19 @@ function startLoop() { if (!rafId) rafId = requestAnimationFrame(animate); }
 function stopLoop() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
 
 document.addEventListener('visibilitychange', () => {
-  document.hidden ? stopLoop() : startLoop();
+  if (document.hidden) {
+    stopLoop();
+  } else {
+    startLoop();
+    if (lastPageX > -900) {
+      mouseX = lastPageX - window.scrollX;
+      mouseY = lastPageY - window.scrollY;
+    }
+  }
+});
+// bfcache 恢復時確保動畫迴圈運行
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) startLoop();
 });
 
 initBgParticles();
