@@ -699,9 +699,14 @@ function createSmallCard(index) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(index); }
   });
 
+  let cachedRect;
+  const qRotateX = gsap.quickTo(wrap, 'rotateX', { duration: 0.2, ease: 'power2.out' });
+  const qRotateY = gsap.quickTo(wrap, 'rotateY', { duration: 0.2, ease: 'power2.out' });
+
   wrap.addEventListener('mouseenter', () => {
     if (isAnimating || !cardsGathered) return;
-    gsap.to(wrap, { y: yOff - 22, scale: 1.08, rotateX: -5, duration: 0.4, ease: 'power2.out' });
+    cachedRect = wrap.getBoundingClientRect();
+    gsap.to(wrap, { y: yOff - 22, scale: 1.08, duration: 0.4, ease: 'power2.out' });
   });
 
   wrap.addEventListener('mouseleave', () => {
@@ -710,11 +715,9 @@ function createSmallCard(index) {
   });
 
   wrap.addEventListener('mousemove', (e) => {
-    if (isAnimating || !cardsGathered) return;
-    const rect = wrap.getBoundingClientRect();
-    const rx = ((e.clientY - rect.top) / rect.height - 0.5) * -12;
-    const ry = ((e.clientX - rect.left) / rect.width - 0.5) * 12;
-    gsap.to(wrap, { rotateX: rx, rotateY: ry, duration: 0.2, ease: 'power2.out' });
+    if (isAnimating || !cardsGathered || !cachedRect) return;
+    qRotateX(((e.clientY - cachedRect.top) / cachedRect.height - 0.5) * -12);
+    qRotateY(((e.clientX - cachedRect.left) / cachedRect.width - 0.5) * 12);
   });
 
   return wrap;
@@ -966,6 +969,7 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 document.addEventListener('click', (e) => {
+  if (clickWaves.length > 20) clickWaves.shift();
   clickWaves.push({ x: e.clientX, y: e.clientY, time: performance.now() });
 });
 
