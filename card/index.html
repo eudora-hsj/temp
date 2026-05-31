@@ -23,7 +23,8 @@
   --text-light:#8a7a6f;
 }
 
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
 body{
   font-family:'Noto Serif TC','Cormorant Garamond',serif;
   background:var(--cream);
@@ -202,7 +203,7 @@ section{
 /* ── 燈箱遮罩 ── */
 .lightbox-backdrop{
   position:fixed;inset:0;z-index:18;
-  background:radial-gradient(ellipse at center,rgba(40,32,26,.45),rgba(30,24,20,.7));
+  background:radial-gradient(ellipse at center,rgba(40,32,26,.3),rgba(30,24,20,.5));
   opacity:0;pointer-events:none;
   transition:opacity .5s ease;
 }
@@ -219,11 +220,10 @@ section{
 /* 卡片背後柔光 */
 .card-glow{
   position:absolute;top:50%;left:50%;
-  width:300px;height:440px;
+  width:360px;height:500px;
   transform:translate(-50%,-50%);
-  border-radius:40%;
-  background:radial-gradient(ellipse,rgba(201,169,110,.25) 0%,rgba(232,207,192,.1) 50%,transparent 75%);
-  filter:blur(40px);
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(201,169,110,.22) 0%,rgba(232,207,192,.08) 40%,transparent 70%);
   opacity:0;pointer-events:none;
   z-index:-1;
 }
@@ -287,7 +287,7 @@ body.scroll-locked{overflow:hidden}
 }
 
 /* ── Section 4: 尾聲 ── */
-.outro{min-height:70vh;text-align:center;gap:1.2rem}
+.outro{min-height:100vh;text-align:center;gap:1.2rem}
 .outro__text{
   font-family:'Cormorant Garamond','Noto Serif TC',serif;
   font-size:clamp(1.2rem,3.5vw,1.7rem);
@@ -446,9 +446,9 @@ const CARDS = [
     icon:'<svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M30 8a16 16 0 1 1-20 6"/><polygon points="10,6 14,16 4,14" fill="currentColor" opacity=".3"/></svg>' }
 ];
 
-const CARD_COUNT = 7;
-const FAN_ANGLES = [-18, -12, -6, 0, 6, 12, 18];
-const FAN_Y      = [22, 14, 6, 0, 6, 14, 22];
+const CARD_COUNT = 9;
+const FAN_ANGLES = [-24, -18, -12, -6, 0, 6, 12, 18, 24];
+const FAN_Y      = [30, 22, 14, 6, 0, 6, 14, 22, 30];
 
 /* ══════════════════════════════════════
    DOM
@@ -675,10 +675,10 @@ const COLORS = [
 function randomScatter(index) {
   const side = index < CARD_COUNT / 2 ? -1 : 1;
   return {
-    x: side * (180 + Math.random() * 200),
-    y: -120 + Math.random() * 250,
-    rotation: (Math.random() - 0.5) * 70,
-    scale: 0.55 + Math.random() * 0.15,
+    x: side * (300 + Math.random() * 300),
+    y: -200 + Math.random() * 400,
+    rotation: (Math.random() - 0.5) * 100,
+    scale: 0.4 + Math.random() * 0.15,
   };
 }
 
@@ -702,7 +702,7 @@ function createSmallCard(index) {
   const mid = (CARD_COUNT - 1) / 2;
   const angle = FAN_ANGLES[index];
   const yOff  = FAN_Y[index];
-  const xOff  = (index - mid) * 55;
+  const xOff  = (index - mid) * 45;
 
   // 設定散落初始狀態
   const scatter = randomScatter(index);
@@ -769,8 +769,8 @@ function dealCards() {
 
   gatherTrigger = ScrollTrigger.create({
     trigger: '#cardSection',
-    start: 'top 90%',
-    end: 'top 15%',
+    start: 'top 95%',
+    end: 'top 5%',
     scrub: 1.2,
     animation: gatherTl,
     onUpdate: (self) => {
