@@ -1,0 +1,66 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Demo, Lang, OutputEntry } from '../../lib/content';
+import { slugOf } from '../../lib/content';
+import { formatDate, t } from '../../i18n/ui';
+import { url } from '../../lib/paths';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  entry: CollectionEntry<'pages'>;
+  outputs: OutputEntry[];
+}
+
+const { lang, demo, entry, outputs } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+---
+
+<header class="page-head">
+  <div class="blobs" aria-hidden="true">
+    <span class="blob blob--moss blob--a"></span>
+  </div>
+  <div class="wrap page-head__inner">
+    {entry.data.eyebrow && <p class="eyebrow">{entry.data.eyebrow}</p>}
+    <h1 class="page-head__title">{entry.data.title}</h1>
+    {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+  </div>
+</header>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <article class="prose">
+      <Content />
+    </article>
+    <p class="count-line">{s.outputs.count(outputs.length)}</p>
+
+    {
+      outputs.length === 0 ? (
+        <p class="prose">{s.outputs.empty}</p>
+      ) : (
+        <div class="card-grid">
+          {outputs.map((item) => (
+            <article class="card">
+              <div class="output__meta">
+                <span class="output__cat">{s.category[item.data.category]}</span>
+                <span>{formatDate(item.data.date, lang)}</span>
+              </div>
+              <h2 class="output__title">
+                <a href={url(demo, lang, `outputs/${slugOf(item.id)}`)}>{item.data.title}</a>
+              </h2>
+              <p class="output__summary">{item.data.summary}</p>
+              <div class="tag-row">
+                <span class="tag tag--accent">{s.region[item.data.region]}</span>
+                {item.data.tags.map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

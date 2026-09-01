@@ -1,0 +1,105 @@
+---
+import { DEMOS, LANGS } from '../lib/content';
+import { DEMO_META, PLANNED_DEMOS } from '../demos/meta';
+import { LANG_LABELS, ui } from '../i18n/ui';
+import { url } from '../lib/paths';
+
+const entries = DEMOS.map((demo) => ({ demo, ...DEMO_META[demo] }));
+---
+
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>版型索引 — {ui.zh.siteName}</title>
+    <meta name="description" content={`同一份 md 內容，${DEMOS.length} 套不同的網站設計。`} />
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: clamp(2rem, 8vw, 6rem) clamp(1.25rem, 5vw, 4rem);
+        font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", sans-serif;
+        line-height: 1.7;
+        background: #12130f;
+        color: #eae7df;
+      }
+      .wrap { max-width: 54rem; margin-inline: auto; }
+      h1 { font-size: clamp(1.75rem, 5vw, 2.75rem); line-height: 1.2; margin: 0 0 1rem; letter-spacing: -0.01em; }
+      .lede { color: #a5a196; max-width: 40rem; margin: 0 0 3.5rem; }
+      .card {
+        border: 1px solid #33342c;
+        border-radius: 4px;
+        padding: 1.75rem;
+        margin-bottom: 1rem;
+        background: #1a1b16;
+      }
+      .card--soon { opacity: 0.45; }
+      .card__top { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: baseline; justify-content: space-between; }
+      .card__id { font-family: ui-monospace, Menlo, monospace; font-size: 0.75rem; letter-spacing: 0.18em; color: #8fb996; }
+      .card__label { font-size: 1.25rem; font-weight: 600; margin: 0; }
+      .card__note { color: #a5a196; font-size: 0.925rem; margin: 0.5rem 0 1.25rem; }
+      .langs { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      .langs a {
+        border: 1px solid #4a4b40;
+        border-radius: 3px;
+        padding: 0.35rem 0.9rem;
+        color: #eae7df;
+        text-decoration: none;
+        font-size: 0.875rem;
+      }
+      .langs a:hover { background: #8fb996; color: #12130f; border-color: #8fb996; }
+      .soon { font-family: ui-monospace, Menlo, monospace; font-size: 0.7rem; letter-spacing: 0.16em; color: #6e6f62; }
+      footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid #33342c; color: #6e6f62; font-size: 0.8rem; }
+      code { font-family: ui-monospace, Menlo, monospace; background: #24251e; padding: 0.1em 0.4em; border-radius: 3px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>一份內容，{DEMOS.length} 套設計</h1>
+      <p class="lede">
+        以下每套 demo 都從同一個 <code>src/content/</code> 讀取內容，一字未改。各套之間不共用任何 CSS
+        或版型元件。語言切換是站內路由，各套皆支援中英日。
+      </p>
+
+      {
+        entries.map(({ demo, label, note }) => (
+          <section class="card">
+            <div class="card__top">
+              <div>
+                <span class="card__id">{demo}</span>
+                <h2 class="card__label">{label}</h2>
+              </div>
+            </div>
+            <p class="card__note">{note}</p>
+            <div class="langs">
+              {LANGS.map((lang) => (
+                <a href={url(demo, lang)}>{LANG_LABELS[lang]}</a>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      {
+        PLANNED_DEMOS.map((item) => (
+          <section class="card card--soon">
+            <div class="card__top">
+              <div>
+                <span class="card__id">{item.id}</span>
+                <h2 class="card__label">{item.label}</h2>
+              </div>
+              <span class="soon">尚未實作</span>
+            </div>
+            <p class="card__note">{item.note}</p>
+          </section>
+        ))
+      }
+
+      <footer>
+        <p>這是一個展示用的示範網站，計劃名稱、成員與資料皆為虛構。</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+---
+import { DEMOS, LANGS, getOutputs, getPage, type Demo, type Lang } from '../../../../lib/content';
+import { registry } from '../../../../registry';
+
+export function getStaticPaths() {
+  return DEMOS.flatMap((demo) => LANGS.map((lang) => ({ params: { demo, lang } })));
+}
+
+const { demo, lang } = Astro.params as { demo: Demo; lang: Lang };
+const { Layout, OutputsIndex } = registry[demo];
+const [entry, outputs] = await Promise.all([getPage(lang, 'outputs'), getOutputs(lang)]);
+---
+
+<Layout lang={lang} demo={demo} title={entry.data.title} description={entry.data.lead}>
+  <OutputsIndex lang={lang} demo={demo} entry={entry} outputs={outputs} />
+</Layout>

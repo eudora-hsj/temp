@@ -1,0 +1,27 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'pages'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<header class="page-head">
+  <div class="shell">
+    {entry.data.eyebrow && <p class="eyebrow">{entry.data.eyebrow}</p>}
+    <h1 class="page-head__title">{entry.data.title}</h1>
+    {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+  </div>
+</header>
+
+<div class="page-body">
+  <div class="shell">
+    <article class="prose">
+      <Content />
+    </article>
+  </div>
+</div>

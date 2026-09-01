@@ -1,0 +1,78 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang, Member } from '../../lib/content';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'pages'>;
+  members: Member[];
+}
+
+const { lang, entry, members } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+
+const COUNTRY_ORDER = ['tw', 'uk', 'jp'] as const;
+const groups = COUNTRY_ORDER.map((country) => ({
+  country,
+  label: s.region[country],
+  people: members.filter((m) => m.country === country),
+})).filter((g) => g.people.length > 0);
+---
+
+<header class="page-head">
+  <div class="shell row__inner">
+    <div class="row__label">{entry.data.eyebrow && <p class="label">{entry.data.eyebrow}</p>}</div>
+    <div class="row__body">
+      <h1 class="page-head__title">{entry.data.title}</h1>
+      {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+    </div>
+  </div>
+</header>
+
+<section class="row" style="border-top:0">
+  <div class="shell row__inner">
+    <div class="row__label"><p class="idx">001</p></div>
+    <div class="row__body">
+      <article class="prose">
+        <Content />
+      </article>
+    </div>
+  </div>
+</section>
+
+{
+  groups.map((group, i) => (
+    <section class="row">
+      <div class="shell row__inner">
+        <div class="row__label">
+          <p class="label">{group.label}</p>
+        </div>
+        <div class="row__body">
+          <p class="member-group__head">
+            {String(i + 1).padStart(3, '0')} / {String(group.people.length).padStart(2, '0')}
+          </p>
+          <div class="member-grid">
+            {group.people.map((m) => (
+              <article class="member">
+                <h3 class="member__name">{m.name}</h3>
+                <div class="member__role">{m.role}</div>
+                <p class="member__affil">{m.affiliation}</p>
+                <p class="member__bio">{m.bio}</p>
+                {m.tags.length > 0 && (
+                  <div class="tag-row">
+                    {m.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  ))
+}

@@ -1,0 +1,73 @@
+members:
+  - id: lin-shu-fen
+    name: Lin Shu-fen
+    role: Principal investigator
+    affiliation: National Cheng Kung University, Department of Environmental Engineering
+    country: tw
+    bio: >-
+      Twenty years working on industrial emissions inventory methods. Argues that most disputes in cross-national comparison are not political but definitional, and go unresolved because the definitions are never laid out. Coordinates the harmonisation rules across all three teams.
+    tags: [emissions inventory, industrial ecology]
+  - id: chen-yao-ting
+    name: Chen Yao-ting
+    role: Taiwan team lead
+    affiliation: Academia Sinica, Institute of Economics
+    country: tw
+    bio: >-
+      Environmental economics and carbon pricing design. Tracks investment behaviour in a sector without a mandatory carbon price, and handles an awkward finding: part of the observed reduction comes from falling output rather than improved efficiency.
+    tags: [environmental economics, carbon pricing]
+  - id: hsu-wan-ju
+    name: Hsu Wan-ju
+    role: Social cost assessment lead
+    affiliation: National University of Kaohsiung, Department of Political and Legal Studies
+    country: tw
+    bio: >-
+      Long-standing work on environmental justice in communities hosting petrochemical complexes. Runs the community interviews and local fiscal analysis for six representative sites, and insists that the question of who bears the cost belongs inside the comparative frame.
+    tags: [environmental justice, community research]
+  - id: whitfield-eleanor
+    name: Eleanor Whitfield
+    role: UK team lead
+    affiliation: University of Manchester, Tyndall Centre
+    country: uk
+    bio: >-
+      Studies the effect of the UK ETS on heavy industry investment decisions. Cautious about attributing reductions to carbon pricing, and attentive to how offshoring turns a real reduction on paper into a statistical displacement.
+    tags: [emissions trading, industrial policy]
+  - id: okonkwo-daniel
+    name: Daniel Okonkwo
+    role: Data methods lead
+    affiliation: Imperial College London, Centre for Environmental Policy
+    country: uk
+    bio: >-
+      Builds the project's harmonisation pipeline and public data platform. Responsible for making every adjustment reversible to its original value, and for publishing the rules themselves as a document open to challenge.
+    tags: [data methods, open science]
+  - id: bennett-clare
+    name: Clare Bennett
+    role: Policy analysis researcher
+    affiliation: University of Leeds, School of Earth and Environment
+    country: uk
+    bio: >-
+      Maps subsidies and transition funds against the timing of corporate capital expenditure. Finds a three-to-five-year lag between policy announcement and realised investment that most comparative studies overlook.
+    tags: [policy analysis, investment decisions]
+  - id: ishikawa-mari
+    name: Ishikawa Mari
+    role: Japan team lead
+    affiliation: University of Tokyo, Institute of Industrial Science
+    country: jp
+    bio: >-
+      Studies the voluntary action plan system in Japanese petrochemicals. Explains a widely misread phenomenon: under specific conditions the voluntary mechanism outperforms mandatory regulation — conditions that are not easily reproduced elsewhere.
+    tags: [industrial institutions, voluntary regulation]
+  - id: takahashi-ken
+    name: Takahashi Ken
+    role: Emissions modelling researcher
+    affiliation: National Institute for Environmental Studies, Earth System Division
+    country: jp
+    bio: >-
+      Handles inventory and model calibration for the Japanese sites. Has worked for years on the technical dispute over on-site generation attribution — the item on which consensus proved hardest to reach.
+    tags: [emissions modelling, energy systems]
+  - id: nomura-aya
+    name: Nomura Aya
+    role: Cross-national coordination researcher
+    affiliation: Hitotsubashi University, Graduate School of Economics
+    country: jp
+    bio: >-
+      Runs the joint meetings and maintains the register of dissent. Keeps an "unresolved disagreements" list in the methodology document, on the view that marking genuine disagreement is worth more than forcing convergence.
+    tags: [comparative research, research coordination]

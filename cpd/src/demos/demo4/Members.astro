@@ -1,0 +1,69 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang, Member } from '../../lib/content';
+import { t } from '../../i18n/ui';
+import { roman } from './roman';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'pages'>;
+  members: Member[];
+}
+
+const { lang, entry, members } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+
+const COUNTRY_ORDER = ['tw', 'uk', 'jp'] as const;
+const groups = COUNTRY_ORDER.map((country) => ({
+  country,
+  label: s.region[country],
+  people: members.filter((m) => m.country === country),
+})).filter((g) => g.people.length > 0);
+---
+
+<header class="sec page-head">
+  <div class="wrap">
+    {entry.data.eyebrow && <p class="volume">{entry.data.eyebrow}</p>}
+    <h1 class="page-head__title">{entry.data.title}</h1>
+    {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+    <div class="ornate"></div>
+  </div>
+</header>
+
+<section class="sec" style="border-top:0;padding-top:0">
+  <div class="wrap">
+    <article class="prose">
+      <Content />
+    </article>
+
+    {
+      groups.map((group, i) => (
+        <section class="member-group">
+          <h2 class="member-group__head">
+            <span class="roman">{roman(i + 1)}</span>
+            {group.label}
+          </h2>
+          <div class="grid">
+            {group.people.map((m) => (
+              <article class="card flourish flourish--sm">
+                <h3 class="member__name">{m.name}</h3>
+                <div class="member__role">{m.role}</div>
+                <p class="member__affil">{m.affiliation}</p>
+                <p class="member__bio">{m.bio}</p>
+                {m.tags.length > 0 && (
+                  <div class="tag-row">
+                    {m.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</section>

@@ -1,0 +1,193 @@
+---
+import { render } from 'astro:content';
+import type { Demo, HomeBlock, Lang, Member, OutputEntry } from '../../lib/content';
+import { slugOf } from '../../lib/content';
+import { formatDate, t } from '../../i18n/ui';
+import { url } from '../../lib/paths';
+import { roman, volume } from './roman';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  blocks: HomeBlock[];
+  members: Member[];
+  outputs: OutputEntry[];
+}
+
+const { lang, demo, blocks, members, outputs } = Astro.props;
+const s = t(lang);
+
+/** 主標題以第一個逗號斷開，後半轉義式襯線——三語標題都是「前提，斷言」的句式。 */
+function splitTitle(title: string) {
+  const m = title.match(/^(.*?[，,、]\s*)(.+)$/);
+  return m ? { head: m[1], tail: m[2] } : { head: title, tail: '' };
+}
+
+const sections = await Promise.all(
+  blocks.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+
+const featuredMembers = members.slice(0, 6);
+const latestOutputs = outputs.slice(0, 3);
+---
+
+{
+  sections.map(({ entry, Content }, blockIndex) => {
+    const d = entry.data;
+    /** 卷次從 hero 之後起算，hero 本身是扉頁。 */
+    const vol = volume(blockIndex, lang);
+
+    if (d.block === 'hero') {
+      const { head, tail } = splitTitle(d.title);
+      return (
+        <section class="sec hero">
+          <div class="wrap">
+            <div class="hero__frame flourish">
+              {d.eyebrow && <p class="volume">{d.eyebrow}</p>}
+              <h1 class="hero__title">
+                {head}
+                {tail && <em>{tail}</em>}
+              </h1>
+              {d.subtitle && <p class="hero__sub">{d.subtitle}</p>}
+              <div class="hero__actions">
+                {d.cta && (
+                  <a class="btn" href={url(demo, lang, d.cta.to)}>
+                    {d.cta.label}
+                  </a>
+                )}
+                <a class="btn btn--outline" href={url(demo, lang, 'outputs')}>
+                  {s.nav.outputs}
+                </a>
+              </div>
+              <div class="ornate" />
+              <div class="hero__note">
+                <Content />
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (d.block === 'cta') {
+      return (
+        <section class="sec sec--panel">
+          <div class="wrap">
+            <div class="proclaim flourish">
+              <p class="proclaim__label">{d.eyebrow ?? s.siteShort}</p>
+              <h2 class="proclaim__title">{d.title}</h2>
+              <div class="ornate" />
+              {d.subtitle && <p class="proclaim__body">{d.subtitle}</p>}
+              {d.cta && (
+                <div class="proclaim__actions">
+                  <a class="btn" href={url(demo, lang, d.cta.to)}>
+                    {d.cta.label}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    const panel = blockIndex % 2 === 0 ? 'sec--panel' : '';
+
+    return (
+      <section class={`sec ${panel}`}>
+        <div class="wrap">
+          <p class="volume">
+            {vol}
+            {d.eyebrow && <span style="letter-spacing:0.18em">· {d.eyebrow}</span>}
+          </p>
+          <h2 class="sec__title">{d.title}</h2>
+          {d.subtitle && <p class="sec__sub">{d.subtitle}</p>}
+
+          {d.block === 'overview' && d.items && (
+            <div class="stats">
+              {d.items.map((item) => (
+                <div class="stat">
+                  <p class="label stat__label">{item.title}</p>
+                  <span class="stat__value">{item.value}</span>
+                  {item.unit && <span class="stat__unit">{item.unit}</span>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'comparison' && d.items && (
+            <div class="grid">
+              {d.items.map((item) => (
+                <article class="card flourish flourish--sm">
+                  {item.region && <div class="plate">{item.region.toUpperCase()}</div>}
+                  <h3 class="compare__name">{item.title}</h3>
+                  <div class="compare__value">{item.value}</div>
+                  {item.unit && <div class="compare__unit">{item.unit}</div>}
+                  {item.desc && <p class="compare__desc">{item.desc}</p>}
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'pillars' && d.items && (
+            <div class="grid">
+              {d.items.map((item, i) => (
+                <article class="card flourish flourish--sm">
+                  <span class="medallion">{roman(i + 1)}</span>
+                  <h3 class="pillar__title">{item.title}</h3>
+                  <p class="pillar__desc">{item.desc}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'members-preview' && (
+            <div class="grid">
+              {featuredMembers.map((m) => (
+                <article class="card flourish flourish--sm">
+                  <h3 class="member__name">{m.name}</h3>
+                  <div class="member__role">{m.role}</div>
+                  <p class="member__affil">{m.affiliation}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'outputs-preview' && (
+            <div class="grid">
+              {latestOutputs.map((item, i) => (
+                <article class="card flourish flourish--sm">
+                  {i === 0 && (
+                    <span class="seal" aria-hidden="true">
+                      ✶
+                    </span>
+                  )}
+                  <div class="output__meta">
+                    <span>{s.category[item.data.category]}</span>
+                    <span>{formatDate(item.data.date, lang)}</span>
+                  </div>
+                  <h3 class="output__title">
+                    <a href={url(demo, lang, `outputs/${slugOf(item.id)}`)}>{item.data.title}</a>
+                  </h3>
+                  <p class="output__summary">{item.data.summary}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          <div class="sec__body">
+            <Content />
+          </div>
+
+          {d.cta && (
+            <div class="sec__actions">
+              <a class="btn btn--ghost" href={url(demo, lang, d.cta.to)}>
+                {d.cta.label}
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })
+}

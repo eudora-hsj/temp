@@ -1,0 +1,66 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang, Member } from '../../lib/content';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'pages'>;
+  members: Member[];
+}
+
+const { lang, entry, members } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+
+const COUNTRY_ORDER = ['tw', 'uk', 'jp'] as const;
+const groups = COUNTRY_ORDER.map((country) => ({
+  country,
+  label: s.region[country],
+  people: members.filter((m) => m.country === country),
+})).filter((g) => g.people.length > 0);
+---
+
+<header class="page-head">
+  <div class="shell">
+    {entry.data.eyebrow && <p class="eyebrow">{entry.data.eyebrow}</p>}
+    <h1 class="page-head__title">{entry.data.title}</h1>
+    {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+  </div>
+</header>
+
+<div class="page-body">
+  <div class="shell">
+    <article class="prose">
+      <Content />
+    </article>
+
+    {
+      groups.map((group) => (
+        <section class="member-group">
+          <h2 class="member-group__head">
+            {group.label} / {String(group.people.length).padStart(2, '0')}
+          </h2>
+          <div class="member-grid">
+            {group.people.map((m) => (
+              <article class="member">
+                <h3 class="member__name">{m.name}</h3>
+                <div class="member__role">{m.role}</div>
+                <p class="member__affil">{m.affiliation}</p>
+                <p class="member__bio">{m.bio}</p>
+                {m.tags.length > 0 && (
+                  <div class="tag-row">
+                    {m.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</div>

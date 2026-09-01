@@ -1,0 +1,70 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Demo, Lang } from '../../lib/content';
+import { formatDate, joinList, t } from '../../i18n/ui';
+import { url } from '../../lib/paths';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  entry: CollectionEntry<'outputs'>;
+}
+
+const { lang, demo, entry } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+const d = entry.data;
+---
+
+<header class="sec page-head">
+  <div class="wrap wrap--4">
+    <p class="volume">{s.category[d.category]} · {s.region[d.region]}</p>
+    <h1 class="page-head__title page-head__title--article">{d.title}</h1>
+    <p class="page-head__lead">{d.summary}</p>
+    <div class="ornate"></div>
+  </div>
+</header>
+
+<section class="sec" style="border-top:0;padding-top:0">
+  <div class="wrap wrap--4">
+    <dl class="ledger">
+      <div>
+        <dt>{s.outputs.publishedOn}</dt>
+        <dd>{formatDate(d.date, lang)}</dd>
+      </div>
+      <div>
+        <dt>{s.outputs.authors}</dt>
+        <dd>{joinList(d.authors, lang)}</dd>
+      </div>
+      {
+        d.venue && (
+          <div>
+            <dt>{s.outputs.venue}</dt>
+            <dd>{d.venue}</dd>
+          </div>
+        )
+      }
+      {
+        d.doi && (
+          <div>
+            <dt>DOI</dt>
+            <dd>{d.doi}</dd>
+          </div>
+        )
+      }
+    </dl>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    <div class="tag-row">
+      {d.tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+
+    <div>
+      <a class="back-link" href={url(demo, lang, 'outputs')}>← {s.outputs.backToList}</a>
+    </div>
+  </div>
+</section>

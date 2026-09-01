@@ -1,0 +1,96 @@
+---
+import { LANGS, type Demo, type Lang } from '../../lib/content';
+import { LANG_LABELS, t } from '../../i18n/ui';
+import { switchLang, url } from '../../lib/paths';
+import themeUrl from './theme.css?url';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  title: string;
+  description?: string;
+}
+
+const { lang, demo, title, description } = Astro.props;
+const s = t(lang);
+const path = Astro.url.pathname;
+
+const HTML_LANG: Record<Lang, string> = { zh: 'zh-Hant-TW', en: 'en-GB', ja: 'ja-JP' };
+
+const nav = [
+  { key: 'home', to: '' },
+  { key: 'about', to: 'about' },
+  { key: 'members', to: 'members' },
+  { key: 'outputs', to: 'outputs' },
+] as const;
+
+const normalise = (p: string) => (p.endsWith('/') ? p.slice(0, -1) : p) || '/';
+
+function isCurrent(to: string) {
+  const target = normalise(url(demo, lang, to));
+  const here = normalise(path);
+  return to === '' ? here === target : here === target || here.startsWith(`${target}/`);
+}
+
+const FONTS =
+  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500' +
+  '&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400' +
+  '&family=Cinzel:wght@500;600' +
+  '&family=Noto+Serif+TC:wght@500;700&family=Noto+Serif+JP:wght@500;700&display=swap';
+---
+
+<!doctype html>
+<html lang={HTML_LANG[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — {s.siteName}</title>
+    {description && <meta name="description" content={description} />}
+    {
+      LANGS.map((alt) => (
+        <link rel="alternate" hreflang={HTML_LANG[alt]} href={new URL(switchLang(path, alt), Astro.site)} />
+      ))
+    }
+    <link rel="stylesheet" href={themeUrl} />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231C1714'/%3E%3Cpath d='M6 12a10 10 0 0 1 20 0v14H6z' fill='%23C9A962'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={FONTS} />
+  </head>
+  <body>
+    <header class="site-head">
+      <div class="wrap site-head__inner">
+        <a class="brand" href={url(demo, lang, '')}>{s.siteShort}</a>
+        <nav class="site-nav" aria-label={s.nav.home}>
+          {
+            nav.map((item) => (
+              <a href={url(demo, lang, item.to)} aria-current={isCurrent(item.to) ? 'page' : undefined}>
+                {s.nav[item.key]}
+              </a>
+            ))
+          }
+        </nav>
+        <div class="lang-switch">
+          {
+            LANGS.map((alt) => (
+              <a href={switchLang(path, alt)} aria-current={alt === lang ? 'true' : undefined} hreflang={HTML_LANG[alt]}>
+                {LANG_LABELS[alt]}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap site-foot__inner">
+        <p class="site-foot__name">{s.siteName}</p>
+        <p class="site-foot__note">{s.footer}</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>萬花筒 — The Geometry of Infinite Light</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0b1a;
+      color: #e0dcd0;
+      font-family: 'Noto Serif TC', serif;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 標題 */
+    .title-overlay {
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .title-overlay h1 {
+      font-size: 2.4rem;
+      letter-spacing: 1.2rem;
+      color: #c9a94e;
+      font-weight: 400;
+      text-shadow: 0 0 40px rgba(201, 169, 78, 0.3);
+    }
+    .title-overlay p {
+      font-size: 0.75rem;
+      letter-spacing: 0.5rem;
+      color: #8a8278;
+      margin-top: 8px;
+      font-family: sans-serif;
+      text-transform: uppercase;
+    }
+
+    /* 萬花筒 Canvas */
+    #kaleidoscope {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    /* 控制面板 */
+    .controls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .element-selector {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 600px;
+    }
+
+    .element-btn {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .element-btn:hover {
+      border-color: rgba(201, 169, 78, 0.5);
+      background: rgba(255,255,255,0.1);
+    }
+    .element-btn.active {
+      border-color: #c9a94e;
+      background: rgba(201, 169, 78, 0.15);
+      box-shadow: 0 0 16px rgba(201, 169, 78, 0.3);
+    }
+    .element-btn canvas {
+      width: 36px;
+      height: 36px;
+      pointer-events: none;
+    }
+    .element-btn .label {
+      position: absolute;
+      bottom: -20px;
+      font-size: 0.6rem;
+      color: #8a8278;
+      white-space: nowrap;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rotate-btn {
+      padding: 10px 28px;
+      border: 1px solid rgba(201, 169, 78, 0.4);
+      border-radius: 24px;
+      background: rgba(201, 169, 78, 0.08);
+      color: #c9a94e;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Noto Serif TC', serif;
+      letter-spacing: 0.2rem;
+    }
+    .rotate-btn:hover {
+      background: rgba(201, 169, 78, 0.2);
+      box-shadow: 0 0 20px rgba(201, 169, 78, 0.2);
+    }
+    .rotate-btn.active {
+      background: rgba(201, 169, 78, 0.25);
+      box-shadow: 0 0 24px rgba(201, 169, 78, 0.3);
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8a8278;
+      font-size: 0.75rem;
+    }
+    .speed-control input[type="range"] {
+      width: 80px;
+      accent-color: #c9a94e;
+    }
+
+    .segments-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8a8278;
+      font-size: 0.75rem;
+    }
+    .segments-control input[type="range"] {
+      width: 80px;
+      accent-color: #c9a94e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title-overlay">
+    <h1>萬 花 筒</h1>
+    <p>The Geometry of Infinite Light</p>
+  </div>
+
+  <canvas id="kaleidoscope"></canvas>
+
+  <div class="controls">
+    <div class="element-selector" id="elementSelector"></div>
+    <div class="action-bar">
+      <div class="segments-control">
+        <span>鏡面</span>
+        <input type="range" id="segmentSlider" min="4" max="24" value="8" step="2">
+        <span id="segmentValue">8</span>
+      </div>
+      <button class="rotate-btn active" id="rotateBtn">旋轉中</button>
+      <div class="speed-control">
+        <span>速度</span>
+        <input type="range" id="speedSlider" min="1" max="20" value="5">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === 圖騰定義 ===
+    const ELEMENTS = [
+      {
+        name: '菱形',
+        active: true,
+        color: [160, 120, 200],
+        draw(ctx, s) {
+          ctx.beginPath();
+          ctx.moveTo(0, -s);
+          ctx.lineTo(s * 0.6, 0);
+          ctx.lineTo(0, s);
+          ctx.lineTo(-s * 0.6, 0);
+          ctx.closePath();
+        }
+      },
+      {
+        name: '三角',
+        active: true,
+        color: [200, 100, 140],
+        draw(ctx, s) {
+          ctx.beginPath();
+          ctx.moveTo(0, -s);
+          ctx.lineTo(s * 0.866, s * 0.5);
+          ctx.lineTo(-s * 0.866, s * 0.5);
+          ctx.closePath();
+        }
+      },
+      {
+        name: '方塊',
+        active: false,
+        color: [100, 160, 200],
+        draw(ctx, s) {
+          ctx.beginPath();
+          ctx.rect(-s * 0.7, -s * 0.7, s * 1.4, s * 1.4);
+        }
+      },
+      {
+        name: '圓形',
+        active: false,
+        color: [180, 160, 100],
+        draw(ctx, s) {
+          ctx.beginPath();
+          ctx.arc(0, 0, s * 0.8, 0, Math.PI * 2);
+        }
+      },
+      {
+        name: '星形',
+        active: false,
+        color: [200, 180, 80],
+        draw(ctx, s) {
+          ctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            const outerAngle = (i * 72 - 90) * Math.PI / 180;
+            const innerAngle = ((i * 72) + 36 - 90) * Math.PI / 180;
+            ctx.lineTo(Math.cos(outerAngle) * s, Math.sin(outerAngle) * s);
+            ctx.lineTo(Math.cos(innerAngle) * s * 0.4, Math.sin(innerAngle) * s * 0.4);
+          }
+          ctx.closePath();
+        }
+      },
+      {
+        name: '六角',
+        active: false,
+        color: [120, 200, 160],
+        draw(ctx, s) {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (i * 60 - 30) * Math.PI / 180;
+            ctx.lineTo(Math.cos(angle) * s, Math.sin(angle) * s);
+          }
+          ctx.closePath();
+        }
+      },
+      {
+        name: '花瓣',
+        active: false,
+        color: [220, 140, 180],
+        draw(ctx, s) {
+          ctx.beginPath();
+          for (let i = 0; i < 4; i++) {
+            const angle = i * Math.PI / 2;
+            ctx.save();
+            ctx.rotate(angle);
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(s * 0.8, -s * 0.4, 0, -s);
+            ctx.quadraticCurveTo(-s * 0.8, -s * 0.4, 0, 0);
+            ctx.restore();
+          }
+        }
+      },
+      {
+        name: '弧線',
+        active: false,
+        color: [160, 200, 220],
+        draw(ctx, s) {
+          ctx.beginPath();
+          ctx.arc(0, -s * 0.3, s * 0.8, 0.2, Math.PI - 0.2);
+          ctx.lineWidth = 3;
+        }
+      }
+    ];
+
+    // === 粒子系統 ===
+    class Particle {
+      constructor(element, index, total) {
+        this.element = element;
+        this.radius = 60 + Math.random() * 120;
+        this.angle = (index / total) * Math.PI * 2 + Math.random() * 0.5;
+        this.size = 10 + Math.random() * 18;
+        this.selfRot = Math.random() * Math.PI * 2;
+        this.opacity = 0.3 + Math.random() * 0.4;
+      }
+    }
+
+    // === 主程式 ===
+    const canvas = document.getElementById('kaleidoscope');
+    const ctx = canvas.getContext('2d');
+    let width, height, cx, cy;
+    let rotating = true;
+    let globalAngle = 0;
+    let speed = 5;
+    let segments = 8;
+    let particles = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      cx = width / 2;
+      cy = height / 2;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 建立選擇按鈕
+    const selectorEl = document.getElementById('elementSelector');
+    ELEMENTS.forEach((el, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'element-btn' + (el.active ? ' active' : '');
+      btn.title = el.name;
+
+      // 預覽 canvas
+      const preview = document.createElement('canvas');
+      preview.width = 72;
+      preview.height = 72;
+      const pctx = preview.getContext('2d');
+      pctx.translate(36, 36);
+      const [r, g, b] = el.color;
+      pctx.fillStyle = `rgba(${r},${g},${b},0.7)`;
+      pctx.strokeStyle = `rgba(${r},${g},${b},0.9)`;
+      el.draw(pctx, 20);
+      if (el.name === '弧線') {
+        pctx.stroke();
+      } else {
+        pctx.fill();
+      }
+      btn.appendChild(preview);
+
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = el.name;
+      btn.appendChild(label);
+
+      btn.addEventListener('click', () => {
+        el.active = !el.active;
+        btn.classList.toggle('active');
+        rebuildParticles();
+      });
+
+      selectorEl.appendChild(btn);
+    });
+
+    // 旋轉控制
+    const rotateBtn = document.getElementById('rotateBtn');
+    rotateBtn.addEventListener('click', () => {
+      rotating = !rotating;
+      rotateBtn.textContent = rotating ? '旋轉中' : '已暫停';
+      rotateBtn.classList.toggle('active', rotating);
+    });
+
+    // 速度控制
+    const speedSlider = document.getElementById('speedSlider');
+    speedSlider.addEventListener('input', e => {
+      speed = parseInt(e.target.value);
+    });
+
+    // 鏡面數控制
+    const segmentSlider = document.getElementById('segmentSlider');
+    const segmentValue = document.getElementById('segmentValue');
+    segmentSlider.addEventListener('input', e => {
+      segments = parseInt(e.target.value);
+      segmentValue.textContent = segments;
+    });
+
+    function rebuildParticles() {
+      particles = [];
+      const activeElements = ELEMENTS.filter(e => e.active);
+      activeElements.forEach(el => {
+        const count = 5 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < count; i++) {
+          particles.push(new Particle(el, i, count));
+        }
+      });
+    }
+    rebuildParticles();
+
+    // === 繪製萬花筒 ===
+    function drawSlice() {
+      // 在一個扇形切片中繪製所有粒子
+      particles.forEach(p => {
+        const x = Math.cos(p.angle) * p.radius;
+        const y = Math.sin(p.angle) * p.radius;
+        const s = p.size;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(p.selfRot);
+
+        const [r, g, b] = p.element.color;
+        ctx.fillStyle = `rgba(${r},${g},${b},${p.opacity})`;
+        ctx.strokeStyle = `rgba(${r},${g},${b},${p.opacity + 0.2})`;
+
+        p.element.draw(ctx, s);
+
+        if (p.element.name === '弧線') {
+          ctx.stroke();
+        } else {
+          ctx.fill();
+        }
+
+        ctx.restore();
+      });
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, width, height);
+
+      // 背景漸層
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.5);
+      grad.addColorStop(0, '#1a1530');
+      grad.addColorStop(1, '#0d0b1a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      // 更新整體旋轉角度
+      if (rotating) {
+        globalAngle += speed * 0.0003;
+      }
+
+      // 萬花筒對稱繪製
+      const sliceAngle = (Math.PI * 2) / segments;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(globalAngle);
+
+      for (let i = 0; i < segments; i++) {
+        ctx.save();
+        ctx.rotate(sliceAngle * i);
+
+        // 正向
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, Math.max(width, height), 0, sliceAngle);
+        ctx.closePath();
+        ctx.clip();
+        drawSlice();
+        ctx.restore();
+
+        // 鏡像
+        ctx.save();
+        ctx.scale(1, -1);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, Math.max(width, height), 0, sliceAngle);
+        ctx.closePath();
+        ctx.clip();
+        drawSlice();
+        ctx.restore();
+
+        ctx.restore();
+      }
+
+      // 中心光暈
+      const glowGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 80);
+      glowGrad.addColorStop(0, 'rgba(201, 169, 78, 0.08)');
+      glowGrad.addColorStop(1, 'rgba(201, 169, 78, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.fillRect(-80, -80, 160, 160);
+
+      ctx.restore();
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>

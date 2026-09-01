@@ -1,0 +1,71 @@
+---
+import { render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { Demo, Lang, OutputEntry } from '../../lib/content';
+import { slugOf } from '../../lib/content';
+import { formatDate, t } from '../../i18n/ui';
+import { url } from '../../lib/paths';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  entry: CollectionEntry<'pages'>;
+  outputs: OutputEntry[];
+}
+
+const { lang, demo, entry, outputs } = Astro.props;
+const { Content } = await render(entry);
+const s = t(lang);
+---
+
+<header class="page-head">
+  <div class="shell row__inner">
+    <div class="row__label">{entry.data.eyebrow && <p class="label">{entry.data.eyebrow}</p>}</div>
+    <div class="row__body">
+      <h1 class="page-head__title">{entry.data.title}</h1>
+      {entry.data.lead && <p class="page-head__lead">{entry.data.lead}</p>}
+    </div>
+  </div>
+</header>
+
+<section class="row" style="border-top:0">
+  <div class="shell row__inner">
+    <div class="row__label"><p class="idx">001</p></div>
+    <div class="row__body">
+      <article class="prose">
+        <Content />
+      </article>
+      <p class="count-line">{s.outputs.count(outputs.length)}</p>
+
+      {
+        outputs.length === 0 ? (
+          <p class="prose">{s.outputs.empty}</p>
+        ) : (
+          <div class="tlist">
+            {outputs.map((item, i) => (
+              <article class="tlist__item">
+                <span class="idx tlist__idx">{String(i + 1).padStart(3, '0')}</span>
+                <div>
+                  <h2 class="tlist__title">
+                    <a href={url(demo, lang, `outputs/${slugOf(item.id)}`)}>{item.data.title}</a>
+                  </h2>
+                  <div class="tlist__meta">
+                    <span>{formatDate(item.data.date, lang)}</span>
+                    <span>{s.category[item.data.category]}</span>
+                  </div>
+                  <p class="tlist__summary">{item.data.summary}</p>
+                  <div class="tag-row">
+                    <span class="tag tag--accent">{s.region[item.data.region]}</span>
+                    {item.data.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,206 @@
+---
+import { render } from 'astro:content';
+import type { Demo, HomeBlock, Lang, Member, OutputEntry } from '../../lib/content';
+import { slugOf } from '../../lib/content';
+import { formatDate, t } from '../../i18n/ui';
+import { url } from '../../lib/paths';
+
+interface Props {
+  lang: Lang;
+  demo: Demo;
+  blocks: HomeBlock[];
+  members: Member[];
+  outputs: OutputEntry[];
+}
+
+const { lang, demo, blocks, members, outputs } = Astro.props;
+const s = t(lang);
+
+/** 主標題以第一個逗號斷開，後半轉義式襯線——三語標題都是「前提，斷言」的句式。 */
+function splitTitle(title: string) {
+  const m = title.match(/^(.*?[，,、]\s*)(.+)$/);
+  return m ? { head: m[1], tail: m[2] } : { head: title, tail: '' };
+}
+
+/** 每種區塊配一種底色，讓長捲軸有色塊節奏而不是一路白到底。 */
+const SECTION_TONE: Record<string, string> = {
+  overview: 'sec--stone',
+  comparison: 'sec--sand',
+  'members-preview': 'sec--stone',
+};
+
+const sections = await Promise.all(
+  blocks.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+
+const featuredMembers = members.slice(0, 6);
+const latestOutputs = outputs.slice(0, 3);
+---
+
+{
+  sections.map(({ entry, Content }) => {
+    const d = entry.data;
+
+    if (d.block === 'hero') {
+      const { head, tail } = splitTitle(d.title);
+      return (
+        <section class="sec hero">
+          <div class="blobs" aria-hidden="true">
+            <span class="blob blob--moss blob--a" />
+            <span class="blob blob--clay blob--b" />
+          </div>
+          <div class="wrap hero__inner">
+            {d.eyebrow && <p class="eyebrow">{d.eyebrow}</p>}
+            <h1 class="hero__title">
+              {head}
+              {tail && <em>{tail}</em>}
+            </h1>
+            {d.subtitle && <p class="hero__sub">{d.subtitle}</p>}
+            <div class="hero__actions">
+              {d.cta && (
+                <a class="btn" href={url(demo, lang, d.cta.to)}>
+                  {d.cta.label}
+                </a>
+              )}
+              <a class="btn btn--outline" href={url(demo, lang, 'outputs')}>
+                {s.nav.outputs}
+              </a>
+            </div>
+            <div class="hero__note">
+              <Content />
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (d.block === 'cta') {
+      return (
+        <section class="sec sec--moss">
+          <div class="blobs" aria-hidden="true">
+            <span class="blob blob--sand blob--a" style="width:30rem;height:24rem;top:-8rem;right:-8rem;opacity:.25" />
+          </div>
+          <div class="wrap wrap--5" style="position:relative;z-index:1">
+            {d.eyebrow && <p class="eyebrow">{d.eyebrow}</p>}
+            <h2 class="sec__title">{d.title}</h2>
+            {d.subtitle && <p class="sec__sub">{d.subtitle}</p>}
+            {d.cta && (
+              <div class="sec__actions">
+                <a class="btn" href={url(demo, lang, d.cta.to)}>
+                  {d.cta.label}
+                </a>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    const tone = SECTION_TONE[d.block] ?? '';
+    const inner = d.block === 'pillars' ? 'wrap wrap--6' : 'wrap';
+
+    return (
+      <section class={`sec ${tone}`}>
+        {d.block === 'pillars' && (
+          <div class="blobs" aria-hidden="true">
+            <span class="blob blob--sand" style="width:32rem;height:26rem;bottom:-10rem;right:-10rem;opacity:.55" />
+          </div>
+        )}
+        <div class={inner} style="position:relative;z-index:1">
+          {d.eyebrow && <p class="eyebrow">{d.eyebrow}</p>}
+          <h2 class="sec__title">{d.title}</h2>
+          {d.subtitle && <p class="sec__sub">{d.subtitle}</p>}
+
+          {d.block === 'overview' && d.items && (
+            <div class="stats">
+              {d.items.map((item) => (
+                <div class="stat">
+                  <p class="stat__label">{item.title}</p>
+                  <span class="stat__value">{item.value}</span>
+                  {item.unit && <span class="stat__unit">{item.unit}</span>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'comparison' && d.items && (
+            <div class="card-grid">
+              {d.items.map((item) => (
+                <article class="card">
+                  {item.region && <span class="compare__flag">{item.region.toUpperCase()}</span>}
+                  <h3 class="compare__name">{item.title}</h3>
+                  <div class="compare__value">{item.value}</div>
+                  {item.unit && <div class="compare__unit">{item.unit}</div>}
+                  {item.desc && <p class="compare__desc">{item.desc}</p>}
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'pillars' && d.items && (
+            <div class="steps">
+              {d.items.map((item, i) => (
+                <article class="step">
+                  <span class="step__badge">{String(i + 1).padStart(2, '0')}</span>
+                  <svg class="step__link" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">
+                    <path
+                      d="M0 18 C 28 2, 62 30, 120 10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-dasharray="5 9"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  <h3 class="step__title">{item.title}</h3>
+                  <p class="step__desc">{item.desc}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'members-preview' && (
+            <div class="card-grid">
+              {featuredMembers.map((m) => (
+                <article class="card card--tilt">
+                  <h3 class="member__name">{m.name}</h3>
+                  <div class="member__role">{m.role}</div>
+                  <p class="member__affil">{m.affiliation}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {d.block === 'outputs-preview' && (
+            <div class="card-grid">
+              {latestOutputs.map((item) => (
+                <article class="card">
+                  <div class="output__meta">
+                    <span class="output__cat">{s.category[item.data.category]}</span>
+                    <span>{formatDate(item.data.date, lang)}</span>
+                  </div>
+                  <h3 class="output__title">
+                    <a href={url(demo, lang, `outputs/${slugOf(item.id)}`)}>{item.data.title}</a>
+                  </h3>
+                  <p class="output__summary">{item.data.summary}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          <div class="sec__body">
+            <Content />
+          </div>
+
+          {d.cta && (
+            <div class="sec__actions">
+              <a class="btn btn--ghost" href={url(demo, lang, d.cta.to)}>
+                {d.cta.label}
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })
+}

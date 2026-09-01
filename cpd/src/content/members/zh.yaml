@@ -1,0 +1,73 @@
+members:
+  - id: lin-shu-fen
+    name: 林淑芬
+    role: 計劃總主持人
+    affiliation: 國立成功大學 環境工程學系
+    country: tw
+    bio: >-
+      研究工業部門排放盤查方法二十年。主張跨國比較的爭議多半不是政治立場問題，而是統計定義沒有攤開來講清楚。負責統籌三國的邊界調和規則。
+    tags: [排放盤查, 產業生態]
+  - id: chen-yao-ting
+    name: 陳耀庭
+    role: 台灣團隊召集人
+    affiliation: 中央研究院 經濟研究所
+    country: tw
+    bio: >-
+      專長環境經濟與碳定價設計。負責追蹤台灣石化業在缺乏強制碳價情況下的投資行為，並處理一個尷尬的發現：部分減碳成效來自產能下降而非效率提升。
+    tags: [環境經濟, 碳定價]
+  - id: hsu-wan-ju
+    name: 許婉如
+    role: 社會成本評估負責人
+    affiliation: 國立高雄大學 政治法律學系
+    country: tw
+    bio: >-
+      長期研究石化工業區周邊社區的環境正義議題。負責六個代表性廠區的社區訪談與地方財政分析，堅持把「誰承擔轉型成本」放進比較框架。
+    tags: [環境正義, 社區研究]
+  - id: whitfield-eleanor
+    name: Eleanor Whitfield
+    role: 英國團隊召集人
+    affiliation: University of Manchester, Tyndall Centre
+    country: uk
+    bio: >-
+      研究 UK ETS 對重工業投資決策的實際影響。對碳價的減碳效果抱持審慎態度，關注產能外移如何讓帳面上的減碳成為統計上的位移。
+    tags: [碳交易, 產業政策]
+  - id: okonkwo-daniel
+    name: Daniel Okonkwo
+    role: 資料方法負責人
+    affiliation: Imperial College London, Centre for Environmental Policy
+    country: uk
+    bio: >-
+      建置計劃的資料調和管線與公開平台。負責讓每一筆調整都能逆推回原始值，並把調和規則本身寫成可被質疑的公開文件。
+    tags: [資料方法, 開放科學]
+  - id: bennett-clare
+    name: Clare Bennett
+    role: 政策分析研究員
+    affiliation: University of Leeds, School of Earth and Environment
+    country: uk
+    bio: >-
+      蒐集三國的補貼與轉型基金措施，對照企業的資本支出時點。指出政策宣示與實際投資之間常有三到五年的落差，而多數比較研究忽略了這段時間差。
+    tags: [政策分析, 投資決策]
+  - id: ishikawa-mari
+    name: 石川真理
+    role: 日本團隊召集人
+    affiliation: 東京大学 生産技術研究所
+    country: jp
+    bio: >-
+      研究日本石化業的自主行動計劃制度。負責解釋一個外界常誤讀的現象：日本的自主機制在特定條件下的執行率高於強制規範，但這個條件並不容易複製。
+    tags: [產業制度, 自主規範]
+  - id: takahashi-ken
+    name: 高橋健
+    role: 排放模型研究員
+    affiliation: 国立環境研究所 地球システム領域
+    country: jp
+    bio: >-
+      負責日本廠區的排放盤查與模型校正。長期處理自用發電排放歸屬的技術爭議，這也是三國調和過程中最難取得共識的項目。
+    tags: [排放模型, 能源系統]
+  - id: nomura-aya
+    name: 野村彩
+    role: 跨國協調研究員
+    affiliation: 一橋大学 経済学研究科
+    country: jp
+    bio: >-
+      負責三地團隊的聯合會議與異議記錄。在方法論文件中維護一份「未解決分歧」清單，認為誠實標示無共識之處比勉強收斂更有價值。
+    tags: [比較研究, 研究協調]

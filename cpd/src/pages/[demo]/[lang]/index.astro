@@ -1,0 +1,22 @@
+---
+import { DEMOS, LANGS, getHomeBlocks, getMembers, getOutputs, type Demo, type Lang } from '../../../lib/content';
+import { registry } from '../../../registry';
+import { t } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return DEMOS.flatMap((demo) => LANGS.map((lang) => ({ params: { demo, lang } })));
+}
+
+const { demo, lang } = Astro.params as { demo: Demo; lang: Lang };
+const { Layout, Home } = registry[demo];
+const [blocks, members, outputs] = await Promise.all([
+  getHomeBlocks(lang),
+  getMembers(lang),
+  getOutputs(lang),
+]);
+const s = t(lang);
+---
+
+<Layout lang={lang} demo={demo} title={s.nav.home} description={s.siteName}>
+  <Home lang={lang} demo={demo} blocks={blocks} members={members} outputs={outputs} />
+</Layout>
